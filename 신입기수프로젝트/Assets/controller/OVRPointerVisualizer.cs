@@ -1,0 +1,81 @@
+/*
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * All rights reserved.
+ *
+ * Licensed under the Oculus SDK License Agreement (the "License");
+ * you may not use the Oculus SDK except in compliance with the License,
+ * which is provided at the time of installation or download, or which
+ * otherwise accompanies this software in either electronic or hard copy form.
+ *
+ * You may obtain a copy of the License at
+ *
+ * https://developer.oculus.com/licenses/oculussdk/
+ *
+ * Unless required by applicable law or agreed to in writing, the Oculus SDK
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+using Oculus.Interaction.Input;
+using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UIElements;
+
+public class OVRPointerVisualizer : MonoBehaviour
+{
+    public LineRenderer linePointer = null;
+    public float rayDrawDistance = 2.5f;
+    public ChangeWallColor wallcolorscript;
+    public changequestion QuestionScript;
+
+    void Update()
+    {
+        Ray ray = new Ray(transform.position, transform.forward);
+
+        Pointer(ray);
+    }
+
+    void Pointer(Ray ray)
+    {
+        RaycastHit hit;
+        if (Physics.Raycast(ray.origin, ray.direction, out hit, rayDrawDistance))
+        {
+            linePointer.enabled = (OVRInput.GetActiveController() == OVRInput.Controller.Touch);
+            linePointer.SetPosition(0, ray.origin);
+            linePointer.SetPosition(1, hit.point);
+            /*if (((OVRInput.GetDown(OVRInput.Button.PrimaryIndexTrigger, OVRInput.Controller.LTouch)) || (OVRInput.GetDown(OVRInput.Button.PrimaryIndexTrigger, OVRInput.Controller.RTouch)) )&& Input.GetKeyDown(KeyCode.UpArrow)) 
+            {
+                
+                    if (hit.collider.CompareTag("QuestionButton"))
+                    {
+                    
+                        QuestionScript.startQuestion();
+                    
+                    }
+                
+            }
+            */
+            if ((OVRInput.GetDown(OVRInput.Button.PrimaryIndexTrigger, OVRInput.Controller.LTouch) || OVRInput.GetDown(OVRInput.Button.PrimaryIndexTrigger, OVRInput.Controller.RTouch)) 
+            && Input.GetKey(KeyCode.UpArrow)) 
+            {
+                if (hit.collider.CompareTag("QuestionButton"))
+                {
+                    wallcolorscript.ChangeColor();
+                    QuestionScript.startQuestion();
+                }
+            }
+
+        }
+
+        else
+        {
+            linePointer.enabled = (OVRInput.GetActiveController() == OVRInput.Controller.Touch);
+            linePointer.SetPosition(0, ray.origin);
+            linePointer.SetPosition(1, ray.origin + ray.direction * rayDrawDistance);
+            linePointer.enabled = false;
+
+        }
+    }
+}

@@ -1,0 +1,5 @@
+그림이 바뀔 때마다 containkey를 이용해서 중복여부 확인.
+추가되면서 dictionary를 확인하여 중복되는 부분 확인.
+중복되는 부분이 있으면 true를 리턴하여 클릭시 +점수 
+없을 시 add로 dictionary 추가 후 false를 리턴하고  감점
+ 
